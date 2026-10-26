@@ -1,0 +1,15 @@
+TENTANG PROGRAM STUDI TEKNIK INFORMATIKA
+
+VISI:
+Menjadi program studi unggul di tingkat nasional dalam penyelenggaraan pendidikan, penelitian, dan penerapan teknologi komputasi, kecerdasan buatan, dan keamanan siber yang berintegritas dan berdaya saing global pada tahun 2030.
+
+MISI:
+1. Menyelenggarakan pendidikan sarjana berkualitas tinggi di bidang Rekayasa Perangkat Lunak, Sistem Cerdas, dan Jaringan Komputer.
+2. Melaksanakan penelitian terapan yang inovatif dan relevan dengan kebutuhan industri serta transformasi digital nasional.
+3. Melaksanakan pengabdian kepada masyarakat berbasis penerapan teknologi informasi dan komunikasi.
+4. Menjalin kemitraan strategis dengan institusi riset dan perusahaan teknologi terkemuka.
+
+BIDANG KONSENTRASI:
+- Rekayasa Perangkat Lunak & Sistem Terdistribusi
+- Jaringan Komputer, Komputasi Awan & Keamanan Siber
+- Sains Data & Kecerdasan Buatan (AI)

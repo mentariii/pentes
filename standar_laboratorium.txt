@@ -1,0 +1,13 @@
+TATA TERTIB & STANDAR PENGGUNAAN LABORATORIUM KOMPUTASI
+
+1. Waktu Operasional:
+Laboratorium beroperasi setiap hari Senin s.d. Jumat pukul 08.00 - 17.00 WIB.
+
+2. Aturan Umum:
+- Mahasiswa wajib mengenakan pakaian rapi, sopan, dan memakai jas lab saat praktikum berlangsung.
+- Dilarang membawa makanan dan minuman ke dalam area meja kerja komputer.
+- Dilarang mengubah konfigurasi perangkat jaringan (router, switch, server) tanpa izin tertulis instruktur.
+- Setiap aktivitas pengujian penetrasi keamanan (Penetration Testing) HANYA diperbolehkan di dalam segmen jaringan laboratorium terisolasi.
+
+3. Sanksi:
+Pelanggaran terhadap tata tertib dapat dikenakan sanksi berupa pencabutan hak akses fasilitas laboratorium dan pembatalan nilai praktikum mata kuliah terkait.

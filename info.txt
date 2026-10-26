@@ -1,0 +1,31 @@
+======================================================================
+PANDUAN LABORATORIUM JARINGAN & PENETRATION TESTING
+Program Studi Teknik Informatika - Modul Pengujian Layanan HTTP
+======================================================================
+
+Selamat datang di Server Target Praktikum Keamanan Siber.
+Server ini dikonfigurasi khusus untuk validasi layanan dan pengujian
+kerentanan web aplikasi tingkat dasar dalam lingkungan terkontrol.
+
+RUANG LINGKUP PRAKTIKUM:
+1. Validasi Layanan (HTTP Service Discovery & Banner Grabbing)
+   - Lakukan pemindaian port dan identifikasi header respons server.
+   - Periksa header kustom X-Lab-Version.
+
+2. Enumerasi Direktori (Directory & File Discovery)
+   - Lakukan fuzzing/brute-force direktori menggunakan Gobuster / Dirb.
+   - Temukan file statis dan catatan tersembunyi.
+
+3. Eksploitasi Otentikasi (SQL Injection Login Bypass)
+   - Lewati otentikasi admin pada login.php tanpa password.
+
+4. Eksfiltrasi Basis Data & Client-Side Attack
+   - Eksploitasi Reflected XSS pada formulir pencarian.
+   - Ekstrak seluruh isi tabel pengguna menggunakan teknik UNION SQLi.
+
+5. Local File Inclusion (LFI)
+   - Muat berkas internal sistem menggunakan parameter URL dinamis.
+
+Dosen Pengampu: Tim Pengajar Keamanan Siber & Jaringan
+Status: ACTIVE TARGET (AUTHORIZED LAB USE ONLY)
+======================================================================

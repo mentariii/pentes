@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /backup-config.txt
+Disallow: /database.sql
+Disallow: /secret-notes.txt
+
+# =======================================================
+# Portal Akademik Teknik Informatika
+# Disallow sensitive internal files from crawler index
+# Token: FLAG{Robots_Txt_Discovery_Success_8841}
+# =======================================================

@@ -1,0 +1,24 @@
+# ====================================================================
+# CADANGAN KONFIGURASI DATABASE SISTEM INFORMASI AKADEMIK
+# Peringatan: Berkas internal tim pengembang web kampus.
+# ====================================================================
+
+[database_environment]
+app_name = "Portal Akademik & Informasi Teknik Informatika"
+app_version = "1.2"
+environment = "production_staging"
+last_backup = "2026-03-20 02:30:00"
+
+[database_credentials]
+db_host = "sql300.infinityfree.com"
+db_user = "if0_38000000"
+db_pass = "P@ssw0rdAdmin123!"
+db_name = "if0_38000000_vulnlab"
+
+[system_secret_keys]
+api_auth_key = "TI-CAMPUS-PORTAL-KEY-99410"
+token_flag = "FLAG{Sensitive_Backup_File_Exposed_4492}"
+
+[administrator_contacts]
+it_support = "helpdesk@informatika.ac.id"
+sysadmin_lead = "sysadmin@informatika.ac.id"
